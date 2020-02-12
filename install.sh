@@ -6,6 +6,7 @@ ServiceDir=/etc/systemd/system/
 AppFiles='
     hdd-32.png
     read-temp.sh
+    conf.py
     storage-indicator.py
 '
 

@@ -14,10 +14,11 @@ gi.require_version('Gtk', '3.0')
 gi.require_version('AppIndicator3', '0.1')
 from gi.repository import Gtk, AppIndicator3, GObject
 
+import conf
 
-update_interval = 5
-device = 'nvme0n1'
-volumes = ['/', '/home/msw/ext']
+update_interval = conf.update_interval
+device = conf.device
+volumes = conf.volumes
 
 
 def format_bytes(size):
