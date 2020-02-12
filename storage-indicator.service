@@ -1,0 +1,11 @@
+[Unit]
+Description=Storage Indicator
+
+[Service]
+Type=simple
+User=root
+Group=root
+ExecStart=/opt/storage-indicator/storage-indicator.py
+ 
+[Install]
+WantedBy=multi-user.target
