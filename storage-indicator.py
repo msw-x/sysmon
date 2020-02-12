@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/python3
 
 #sudo apt install gir1.2-appindicator3-0.1
 #sudo apt install smartmontools
@@ -16,8 +16,6 @@ from gi.repository import Gtk, AppIndicator3, GObject
 
 import conf
 
-update_interval = conf.update_interval
-device = conf.device
 volumes = conf.volumes
 
 
@@ -60,8 +58,7 @@ class Indicator():
         Gtk.main_quit()
 
     def read_temp(self):
-        output = subprocess.check_output([currpath+'/read-temp.sh', device])
-        return output.decode('utf-8').rstrip()
+        return open(currpath+'/device.t').readline().rstrip()
 
     def make_label(self):
         temperature = self.read_temp()
@@ -72,12 +69,11 @@ class Indicator():
         return label
 
     def run(self):
-        step = update_interval * 10
+        step = 10
         n = step
         while self.do:
             if n == step:
                 n = 0
-                
                 self.indicator.set_label(self.make_label(), '')
             n = n + 1
             time.sleep(0.1)

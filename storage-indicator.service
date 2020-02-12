@@ -5,7 +5,8 @@ Description=Storage Indicator
 Type=simple
 User=root
 Group=root
-ExecStart=/opt/storage-indicator/storage-indicator.py
+WorkingDirectory=/opt/storage-indicator
+ExecStart=/opt/storage-indicator/storage-indicator-service.sh
  
 [Install]
 WantedBy=multi-user.target

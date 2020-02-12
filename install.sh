@@ -1,7 +1,9 @@
 #!/bin/bash
 
 DstDir=/opt/storage-indicator
-ServiceDir=/etc/systemd/system/
+
+User=$(who | awk '(NR == 1)' | awk '{print $1}')
+Home='/home/'$User
 
 AppFiles='
     hdd-32.png
@@ -11,7 +13,7 @@ AppFiles='
 '
 
 PrintCommands=1
-PerformCommands=0
+PerformCommands=1
 
 function Echo {
     if [[ $PrintCommands == 1 ]]; then
@@ -36,11 +38,12 @@ function Exec {
 
 echo '[Install app]'
 Exec "mkdir -p ${DstDir}"
-for i in $AptList; do
+for i in $AppFiles; do
     Exec "cp $i ${DstDir}"
 done
+Exec "cp storage-indicator.desktop ${Home}/.config/autostart"
 
-echo '[Install app service]'
+echo '[Install service]'
 Exec "cp storage-indicator.service ${ServiceDir}"
 Exec "systemctl enable storage-indicator"
 Exec "systemctl start storage-indicator"
