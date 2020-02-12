@@ -1,15 +1,17 @@
 #!/bin/bash
 
-DstDir=/opt/storage-indicator
-
 User=$(who | awk '(NR == 1)' | awk '{print $1}')
 Home='/home/'$User
 
+DstDir=/opt/storage-indicator
+ServiceDir=/etc/systemd/system/
+AutostartDir=${Home}/.config/autostart
+
 AppFiles='
     hdd-32.png
-    read-temp.sh
     conf.py
     storage-indicator.py
+    storage-indicator-service.sh
 '
 
 PrintCommands=1
@@ -41,7 +43,7 @@ Exec "mkdir -p ${DstDir}"
 for i in $AppFiles; do
     Exec "cp $i ${DstDir}"
 done
-Exec "cp storage-indicator.desktop ${Home}/.config/autostart"
+Exec "cp storage-indicator.desktop ${AutostartDir}"
 
 echo '[Install service]'
 Exec "cp storage-indicator.service ${ServiceDir}"
