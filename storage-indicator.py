@@ -37,6 +37,7 @@ class Indicator():
     def __init__(self):
         self.app = 'show_proc'
         iconpath = currpath+'/hdd-32.png'
+        self.temperature = '?'
         self.indicator = AppIndicator3.Indicator.new(
             self.app, iconpath,
             AppIndicator3.IndicatorCategory.OTHER)
@@ -58,7 +59,10 @@ class Indicator():
         Gtk.main_quit()
 
     def read_temp(self):
-        return open(currpath+'/device.t').readline().rstrip()
+        temperature = open(currpath+'/device.t').readline().rstrip()
+        if temperature != '':
+            self.temperature = temperature
+        return self.temperature
 
     def make_label(self):
         temperature = self.read_temp()
