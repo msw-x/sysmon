@@ -39,16 +39,16 @@ function Exec {
 }
 
 echo '[Install app]'
-Exec "mkdir -p ${DstDir}"
+Exec "sudo mkdir -p ${DstDir}"
 for i in $AppFiles; do
-    Exec "cp $i ${DstDir}"
+    Exec "sudo cp $i ${DstDir}"
 done
 Exec "mkdir -p ${AutostartDir}"
 Exec "cp storage-indicator.desktop ${AutostartDir}"
 
 echo '[Install service]'
-Exec "cp storage-indicator.service ${ServiceDir}"
-Exec "systemctl enable storage-indicator"
-Exec "systemctl start storage-indicator"
+Exec "sudo cp storage-indicator.service ${ServiceDir}"
+Exec "sudo systemctl enable storage-indicator"
+Exec "sudo systemctl start storage-indicator"
 
 echo '[Installation completed successfully]'
