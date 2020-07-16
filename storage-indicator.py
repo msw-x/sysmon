@@ -68,8 +68,9 @@ class Indicator():
         temperature = self.read_temp()
         label = ' ' + temperature + '°C'
         for vol in volumes:
-            total, used, free = shutil.disk_usage(vol)
-            label += ' ' + format_bytes(free) + '/' + str(int(used / total * 100)) + '%'
+            if os.path.exists(vol):
+                total, used, free = shutil.disk_usage(vol)
+                label += ' ' + format_bytes(free) + '/' + str(int(used / total * 100)) + '%'
         return label
 
     def run(self):
