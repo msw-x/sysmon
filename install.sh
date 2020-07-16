@@ -43,6 +43,7 @@ Exec "mkdir -p ${DstDir}"
 for i in $AppFiles; do
     Exec "cp $i ${DstDir}"
 done
+Exec "mkdir -p ${AutostartDir}"
 Exec "cp storage-indicator.desktop ${AutostartDir}"
 
 echo '[Install service]'
