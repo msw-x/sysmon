@@ -1,1 +1,1 @@
-volumes = ['/', '/home/msw/ext']
+volumes = ['/', '/mnt/ext']
