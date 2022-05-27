@@ -62,8 +62,8 @@ class Indicator():
         Gtk.main_quit()
 
     def updaet_temp(self):
-        self.cpu_temp = '?'
-        self.drive_temp = '?'
+        self.cpu_temp = '?°C'
+        self.drive_temp = '?°C'
         temps = psutil.sensors_temperatures()
         for name, entries in temps.items():
             if name == 'coretemp':
