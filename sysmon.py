@@ -39,7 +39,7 @@ currpath = os.path.dirname(os.path.realpath(__file__))
 class Indicator():
     def __init__(self):
         self.app = 'sysmon'
-        iconpath = currpath+'/icon2.svg'
+        iconpath = currpath+'/icon.svg'
         self.temperature = '?'
         self.indicator = AppIndicator3.Indicator.new(
             self.app, iconpath,

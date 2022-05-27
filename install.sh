@@ -1,7 +1,10 @@
 #!/bin/bash
 
+User=$(who | awk '(NR == 1)' | awk '{print $1}')
+Home='/home/'$User
+
 DstDir=/opt/sysmon
-ServiceDir=/etc/systemd/system/
+AutostartDir=${Home}/.config/autostart
 
 AppFiles='
     icon.svg
@@ -33,16 +36,13 @@ function Exec {
     fi
 }
 
-echo '[Install app]'
+echo '[Install]'
 Exec "sudo mkdir -p $DstDir"
 for i in $AppFiles; do
     Exec "sudo cp $i $DstDir"
 done
+Exec "mkdir -p $AutostartDir"
+Exec "cp sysmon.desktop $AutostartDir"
 Exec "pip3 install psutil"
-
-echo '[Install service]'
-Exec "sudo cp sysmon.service $ServiceDir"
-Exec "sudo systemctl enable sysmon"
-Exec "sudo systemctl start sysmon"
 
 echo '[Installation completed successfully]'

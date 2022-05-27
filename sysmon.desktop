@@ -1,0 +1,4 @@
+[Desktop Entry]
+Name=SysMon
+Type=Application
+Exec=/opt/sysmon/sysmon.py
