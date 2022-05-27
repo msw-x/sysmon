@@ -1,17 +1,12 @@
 #!/bin/bash
 
-User=$(who | awk '(NR == 1)' | awk '{print $1}')
-Home='/home/'$User
-
-DstDir=/opt/storage-indicator
+DstDir=/opt/sysmon
 ServiceDir=/etc/systemd/system/
-AutostartDir=${Home}/.config/autostart
 
 AppFiles='
-    hdd-32.png
+    icon.svg
     conf.py
-    storage-indicator.py
-    storage-indicator-service.sh
+    sysmon.py
 '
 
 PrintCommands=1
@@ -25,7 +20,7 @@ function Echo {
 
 function Fatal {
     msg=$*
-    echo "[ERROR]: ${msg}"
+    echo "[ERROR]: $msg"
     exit 1
 }
 
@@ -39,16 +34,15 @@ function Exec {
 }
 
 echo '[Install app]'
-Exec "sudo mkdir -p ${DstDir}"
+Exec "sudo mkdir -p $DstDir"
 for i in $AppFiles; do
-    Exec "sudo cp $i ${DstDir}"
+    Exec "sudo cp $i $DstDir"
 done
-Exec "mkdir -p ${AutostartDir}"
-Exec "cp storage-indicator.desktop ${AutostartDir}"
+Exec "pip3 install psutil"
 
 echo '[Install service]'
-Exec "sudo cp storage-indicator.service ${ServiceDir}"
-Exec "sudo systemctl enable storage-indicator"
-Exec "sudo systemctl start storage-indicator"
+Exec "sudo cp sysmon.service $ServiceDir"
+Exec "sudo systemctl enable sysmon"
+Exec "sudo systemctl start sysmon"
 
 echo '[Installation completed successfully]'

@@ -1,0 +1,12 @@
+[Unit]
+Description=SysMon
+
+[Service]
+Type=simple
+User=msw
+Group=msw
+WorkingDirectory=/opt/sysmon
+ExecStart=/opt/sysmon/sysmon.py
+
+[Install]
+WantedBy=multi-user.target

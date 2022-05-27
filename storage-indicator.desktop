@@ -1,4 +1,0 @@
-[Desktop Entry]
-Name=Storage Indicator
-Type=Application
-Exec=/opt/storage-indicator/storage-indicator.py

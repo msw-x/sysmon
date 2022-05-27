@@ -2,26 +2,27 @@
 
 #sudo apt install gir1.2-appindicator3-0.1
 #sudo apt install smartmontools
+#sudo chmod u+s /usr/sbin/smartctl
+#pip3 install psutil
 
 import os
 import signal
 import gi
+import re
 import time
 import threading
 import subprocess
 import shutil
+import psutil
 gi.require_version('Gtk', '3.0')
 gi.require_version('AppIndicator3', '0.1')
 from gi.repository import Gtk, AppIndicator3, GObject
 
 import conf
 
-volumes = conf.volumes
-
 
 def format_bytes(size):
-    # 2**10 = 1024
-    power = 2**10
+    power = 2**10 # = 1024
     n = 0
     power_labels = {0 : '', 1: 'K', 2: 'M', 3: 'G', 4: 'T'}
     while size > power:
@@ -29,14 +30,16 @@ def format_bytes(size):
         n += 1
     return str(int(size)) + ' ' + power_labels[n]
 
+def format_temp(temp):
+    return str(int(temp)) + '°C'
 
 currpath = os.path.dirname(os.path.realpath(__file__))
 
 
 class Indicator():
     def __init__(self):
-        self.app = 'show_proc'
-        iconpath = currpath+'/hdd-32.png'
+        self.app = 'sysmon'
+        iconpath = currpath+'/icon2.svg'
         self.temperature = '?'
         self.indicator = AppIndicator3.Indicator.new(
             self.app, iconpath,
@@ -58,16 +61,29 @@ class Indicator():
         self.do = False
         Gtk.main_quit()
 
-    def read_temp(self):
-        temperature = open(currpath+'/device.t').readline().rstrip()
-        if temperature != '':
-            self.temperature = temperature
-        return self.temperature
+    def updaet_temp(self):
+        self.cpu_temp = '?'
+        self.drive_temp = '?'
+        temps = psutil.sensors_temperatures()
+        for name, entries in temps.items():
+            if name == 'coretemp':
+                for entry in entries:
+                    if entry.label == 'Package id 0':
+                        self.cpu_temp = format_temp(entry.current)
+            if name == 'nvme':
+                for entry in entries:
+                    self.drive_temp = format_temp(entry.current)
+
+    def cpu_use(self):
+        return str(int(psutil.cpu_percent())) + '%'
+
+    def ram_use(self):
+        return format_bytes(psutil.virtual_memory().total - psutil.virtual_memory().available)
 
     def make_label(self):
-        temperature = self.read_temp()
-        label = ' ' + temperature + '°C'
-        for vol in volumes:
+        self.updaet_temp()
+        label = ' ' + self.cpu_temp + ' ' + self.cpu_use() + ' ' + self.ram_use() + ' | ' + self.drive_temp
+        for vol in conf.volumes:
             if os.path.exists(vol):
                 total, used, free = shutil.disk_usage(vol)
                 label += ' ' + format_bytes(free) + '/' + str(int(used / total * 100)) + '%'
