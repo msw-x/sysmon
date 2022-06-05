@@ -1,10 +1,5 @@
 #!/usr/bin/python3
 
-#sudo apt install gir1.2-appindicator3-0.1
-#sudo apt install smartmontools
-#sudo chmod u+s /usr/sbin/smartctl
-#pip3 install psutil
-
 import os
 import signal
 import gi
@@ -31,6 +26,8 @@ def format_bytes(size):
     while size > power:
         size /= power
         n += 1
+        if (len(power_labels) - 1) == n:
+            break
     return str(int(size)) + ' ' + power_labels[n]
 
 def format_temp(temp):
@@ -89,20 +86,35 @@ class Indicator():
     def ram_use(self):
         return format_bytes(psutil.virtual_memory().total - psutil.virtual_memory().available)
 
-    def make_label(self):
-        self.updaet_temp()
-        label = ' ' + self.cpu_temp + ' ' + self.cpu_use() + ' ' + self.ram_use() + ' | ' + self.drive_temp
+    def disk_usage(self):
+        label = ''
         for vol in conf.volumes:
             if os.path.exists(vol):
                 total, used, free = shutil.disk_usage(vol)
                 label += ' ' + format_bytes(free) + '/' + str(int(used / total * 100)) + '%'
         return label
 
+    def make_label(self):
+        try:
+            self.updaet_temp()
+        except Exception as e:
+            self.log.error('temp fail: ' + traceback.format_exc())
+        label = ' ';
+        try:
+            label += self.cpu_temp + ' ' + self.cpu_use() + ' ' + self.ram_use() + ' | ' + self.drive_temp
+        except Exception as e:
+            self.log.error('system use fail: ' + traceback.format_exc())
+        try:
+            label += self.disk_usage()
+        except Exception as e:
+            self.log.error('disk usage fail: ' + traceback.format_exc())
+        return label
+
     def update(self):
         try:
             self.indicator.set_label(self.make_label(), '')
         except Exception as e:
-            self.log.error(traceback.format_exc())
+            self.log.error('update fail: ' + traceback.format_exc())
 
     def run(self):
         step = 10
