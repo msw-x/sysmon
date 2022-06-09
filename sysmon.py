@@ -14,7 +14,7 @@ import logging.handlers
 import traceback
 gi.require_version('Gtk', '3.0')
 gi.require_version('AppIndicator3', '0.1')
-from gi.repository import Gtk, AppIndicator3, GObject
+from gi.repository import Gtk, AppIndicator3, GObject, GLib
 
 import conf
 
@@ -38,16 +38,16 @@ currpath = os.path.dirname(os.path.realpath(__file__))
 
 class Indicator():
     def __init__(self):
-        appname = 'sysmon'
         iconpath = currpath+'/icon.svg'
         syslog = logging.handlers.SysLogHandler(address = '/dev/log')
         logfmt = logging.Formatter('%(name)s[' + str(os.getpid()) + ']: %(message)s')
         syslog.setFormatter(logfmt)
-        self.log = logging.getLogger(appname)
+        self.app = 'sysmon'
+        self.log = logging.getLogger(self.app)
         self.log.addHandler(syslog)
         self.log.setLevel(logging.DEBUG)
         self.temperature = '?'
-        self.indicator = AppIndicator3.Indicator.new(appname, iconpath, AppIndicator3.IndicatorCategory.OTHER)
+        self.indicator = AppIndicator3.Indicator.new(self.app, iconpath, AppIndicator3.IndicatorCategory.OTHER)
         self.indicator.set_status(AppIndicator3.IndicatorStatus.ACTIVE)
         self.indicator.set_menu(self.create_menu())
         self.do = True
@@ -112,7 +112,8 @@ class Indicator():
 
     def update(self):
         try:
-            self.indicator.set_label(self.make_label(), '')
+            label = self.make_label()
+            GLib.idle_add(self.indicator.set_label, label, self.app)
         except Exception as e:
             self.log.error('update fail: ' + traceback.format_exc())
 
