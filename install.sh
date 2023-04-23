@@ -43,7 +43,7 @@ for i in $AppFiles; do
 done
 Exec "mkdir -p $AutostartDir"
 Exec "cp sysmon.desktop $AutostartDir"
-Exec "pip3 install psutil"
+Exec "sudo apt install python3-psutil"
 Exec "sudo apt install gir1.2-appindicator3-0.1"
 
 echo '[Installation completed successfully]'
